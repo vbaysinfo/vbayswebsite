@@ -8,9 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "gen:apps-script": "node --experimental-strip-types --no-warnings scripts/gen-apps-script.ts",
+    "gen:apps-script": "node --experimental-strip-types --no-warnings scripts/gen-apps-script.ts && node scripts/bundle-apps-script.mjs",
     "test:apps-script": "node scripts/test-apps-script.mjs",
-    "test:e2e": "node scripts/e2e.mjs"
+    "test:e2e": "node scripts/e2e.mjs",
+    "bundle:apps-script": "node scripts/bundle-apps-script.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

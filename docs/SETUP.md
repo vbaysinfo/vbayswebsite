@@ -11,10 +11,10 @@ The spreadsheet is **created automatically** in this Google Drive folder:
 (set in `apps-script/Setup.gs` → `DEFAULT_DRIVE_FOLDER_ID`, or override it with the `DRIVE_FOLDER_ID` Script Property.)
 
 1. Sign in with the Google account that **owns (or can edit) that folder**, then open **script.google.com → New project**. Name it, for example, "VBays Interiors API".
-2. Create these files and paste in the matching file from `apps-script/`:
-   `Code.gs`, `Social.gs`, `Setup.gs`, `Schema.gs`.
-3. **Project Settings (⚙)** → tick *Show "appsscript.json"* → paste `apps-script/appsscript.json` into it.
-4. Choose the function **`setup`** → **Run** → approve the permissions. In the Drive folder it creates:
+2. Click **Code.gs**, select everything and delete it, then paste the **whole** of `apps-script/dist/Code.gs`. Save with **Ctrl+S**.
+   (That one file bundles Setup, Code, Social and Schema. The separate files in `apps-script/` are the editable sources; regenerate the bundle with `npm run gen:apps-script`.)
+3. **Project Settings (⚙)** → tick *Show "appsscript.json" manifest file in editor* → open **appsscript.json** → replace its contents with `apps-script/dist/appsscript.json` → Save.
+4. In the function drop-down at the top, choose **`setup`** → **Run** → *Review permissions* → pick your account → *Advanced → Go to project (unsafe)* (normal for your own script) → **Allow**. In the Drive folder it creates:
 
    ```
    📁 your folder

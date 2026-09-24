@@ -135,7 +135,7 @@ function mockGraph(url) {
 }
 
 vm.createContext(ctx);
-for (const f of ["Schema.gs", "Code.gs", "Social.gs", "Setup.gs"]) vm.runInContext(readFileSync(new URL(`../apps-script/${f}`, import.meta.url), "utf8"), ctx, { filename: f });
+for (const f of process.env.BUNDLE ? ["dist/Code.gs"] : ["Schema.gs", "Code.gs", "Social.gs", "Setup.gs"]) vm.runInContext(readFileSync(new URL(`../apps-script/${f}`, import.meta.url), "utf8"), ctx, { filename: f });
 
 const post = (route, data = {}, secret = props.get("API_SECRET")) =>
   JSON.parse(ctx.doPost({ postData: { contents: JSON.stringify({ route, secret, data }) } }).text);
