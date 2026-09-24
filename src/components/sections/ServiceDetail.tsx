@@ -17,7 +17,8 @@ import { ViewEvent } from "@/components/layout/Trackers";
 import { CUSTOMER_PROCESS, LEAD_OPTIONS } from "@/data/site";
 
 function requirementFor(s: Service) {
-  const map: Record<string, string> = { Kitchen: "Modular Kitchen", Bedroom: "Bedroom", "Living Room": "Living Room", Wardrobe: "Wardrobe", Office: "Office", Commercial: "Commercial", "Full Home": "Full Home Interiors" };
+  // Home services leave the choice (1/2/3BHK) to the visitor.
+  const map: Record<string, string> = { Office: "Office", Commercial: "Commercial" };
   const r = map[s.category] || "";
   return LEAD_OPTIONS.requirement.includes(r) ? r : "";
 }

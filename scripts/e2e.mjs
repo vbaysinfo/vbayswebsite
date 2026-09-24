@@ -61,7 +61,7 @@ ok("service-specific pre-filled WhatsApp message");
 // Multi-step lead form on the home page
 await page.goto(B + "/", { waitUntil: "load" }); await page.locator("#consultation form").scrollIntoViewIfNeeded(); await page.waitForTimeout(800);
 const form = page.locator("#consultation form");
-await form.getByRole("button", { name: /Modular Kitchen/ }).click();
+await form.getByRole("button", { name: /^3BHK/ }).click();
 await form.getByRole("button", { name: /Apartment/ }).click();
 await form.getByRole("button", { name: /Ready to Move/ }).click();
 await form.getByRole("button", { name: /₹5–10 Lakhs/ }).click();

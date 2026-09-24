@@ -111,7 +111,7 @@ export const WHY_CHOOSE_US = [
 ];
 
 export const LEAD_OPTIONS = {
-  requirement: ["Full Home Interiors", "Modular Kitchen", "Bedroom", "Living Room", "Wardrobe", "Office", "Commercial", "Other"],
+  requirement: ["3BHK", "2BHK", "1BHK", "Commercial", "Office", "Other"],
   propertyType: ["Apartment", "Villa", "Independent House", "Office", "Commercial", "Other"],
   propertyStatus: ["Planning", "Under Construction", "Ready to Move", "Renovation"],
   budget: ["Below ₹5 Lakhs", "₹5–10 Lakhs", "₹10–20 Lakhs", "₹20–30 Lakhs", "₹30 Lakhs+", "Not Decided"],
