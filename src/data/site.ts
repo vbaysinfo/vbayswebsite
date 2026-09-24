@@ -26,7 +26,6 @@ export const NAV_MAIN = [
   { label: "Projects", href: "/projects" },
   { label: "Gallery", href: "/gallery" },
   { label: "Factory", href: "/factory" },
-  { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
 

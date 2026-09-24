@@ -59,7 +59,7 @@ export async function Footer() {
         <div>
           <p className="mb-4 text-[0.68rem] font-medium tracking-[0.28em] text-brass uppercase">Company</p>
           <ul className="space-y-2.5 text-sm">
-            {[["Projects", "/projects"], ["Gallery", "/gallery"], ["Our Factory", "/factory"], ["About", "/about"], ["Contact", "/contact"], ["Get a Quote", "/get-quote"]].map(([l, h]) => (
+            {[["Projects", "/projects"], ["Gallery", "/gallery"], ["Our Factory", "/factory"], ["Contact", "/contact"], ["Get a Quote", "/get-quote"]].map(([l, h]) => (
               <li key={h}><Link href={h} className="hover:text-white">{l}</Link></li>
             ))}
           </ul>

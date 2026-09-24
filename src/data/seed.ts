@@ -50,8 +50,8 @@ export const IMG = {
 export const seedSettings: Settings = {
   companyName: "VBays Interiors",
   logoUrl: "",
-  phone: "+91 90000 00000",
-  whatsappNumber: "919000000000",
+  phone: "+91 95819 09904",
+  whatsappNumber: "919581909904",
   email: "hello@vbaysinteriors.com",
   officeAddress: "Design Studio, Main Road, Visakhapatnam, Andhra Pradesh",
   factoryAddress: "Modular Manufacturing Unit, Industrial Estate, Visakhapatnam, Andhra Pradesh",

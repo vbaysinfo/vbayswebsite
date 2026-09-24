@@ -177,7 +177,7 @@ test("content bundle returns camelCase CMS data; testimonials hidden until appro
   const r = post("content");
   assert.equal(r.ok, true);
   assert.equal(r.data.settings.companyName, "VBays Interiors");
-  assert.equal(r.data.settings.whatsappNumber, "919000000000");
+  assert.equal(r.data.settings.whatsappNumber, "919581909904");
   assert.equal(r.data.services.length, 12);
   assert.equal(r.data.services[1].slug, "modular-kitchen");
   assert.ok(r.data.services[0].seoTitle.includes("{city}"));

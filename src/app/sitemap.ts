@@ -4,7 +4,7 @@ import { citySlug, SITE_URL } from "@/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { services, projects, settings } = await getContent();
-  const staticPaths = ["", "/interiors", "/projects", "/gallery", "/factory", "/about", "/contact", "/get-quote"];
+  const staticPaths = ["", "/interiors", "/projects", "/gallery", "/factory", "/contact", "/get-quote"];
   return [
     ...staticPaths.map((p) => ({ url: `${SITE_URL}${p}`, changeFrequency: "weekly" as const, priority: p === "" ? 1 : 0.8 })),
     ...services.map((s) => ({ url: `${SITE_URL}/interiors/${s.slug}`, changeFrequency: "weekly" as const, priority: 0.9 })),

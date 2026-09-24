@@ -231,12 +231,12 @@ var SEED = {
     ],
     [
       "Phone",
-      "+91 90000 00000",
+      "+91 95819 09904",
       "Shown on the site and used for click-to-call"
     ],
     [
       "WhatsApp Number",
-      "919000000000",
+      "919581909904",
       "Country code + number, digits only, e.g. 919876543210"
     ],
     [

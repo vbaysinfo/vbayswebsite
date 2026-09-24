@@ -19,11 +19,11 @@ const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } })
 const page = await ctx.newPage();
 page.on("console", (m) => { if (m.type() === "error" && !/images\.unsplash|Failed to load resource/.test(m.text())) errors.push(`${page.url()}: ${m.text()}`); });
 page.on("pageerror", (e) => errors.push(`${page.url()}: ${e.message}`));
-for (const p of ["/", "/interiors", "/interiors/modular-kitchen", "/interiors/wardrobes/vizianagaram", "/projects", "/projects/3bhk-warm-contemporary", "/gallery", "/factory", "/about", "/contact", "/get-quote", "/sitemap.xml", "/robots.txt"]) {
+for (const p of ["/", "/interiors", "/interiors/modular-kitchen", "/interiors/wardrobes/vizianagaram", "/projects", "/projects/3bhk-warm-contemporary", "/gallery", "/factory", "/contact", "/get-quote", "/sitemap.xml", "/robots.txt"]) {
   const r = await page.goto(B + p, { waitUntil: "networkidle" });
   assert.equal(r.status(), 200, p);
 }
-ok("13 public pages return 200");
+ok("12 public pages return 200");
 const nf = await page.goto(B + "/interiors/does-not-exist");
 assert.equal(nf.status(), 404);
 ok("unknown service → 404");
