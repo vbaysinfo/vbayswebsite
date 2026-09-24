@@ -1,0 +1,35 @@
+name: Check Apps Script API
+
+# Manually run: Actions → "Check Apps Script API" → Run workflow → paste the /exec URL.
+# Only calls the public, read-only routes (no secret needed) and verifies private data is not exposed.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Apps Script Web App URL (…/exec)"
+        required: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call public API routes
+        env:
+          URL: ${{ inputs.url }}
+        run: |
+          set -u
+          fail=0
+          get() { curl -sSL --max-time 60 "$URL$1"; }
+          check() { # name, query, jq-filter that must be true
+            body="$(get "$2")"
+            echo "── $1 ($2)"; echo "$body" | head -c 600; echo
+            if echo "$body" | jq -e "$3" >/dev/null 2>&1; then echo "PASS  $1"; else echo "FAIL  $1"; fail=1; fi
+            echo
+          }
+          check "Health"                 ""                    '.ok == true'
+          check "Settings from SETTINGS" "?route=settings"     '.ok == true and (.data.companyName | length > 0)'
+          check "Services from SERVICES" "?route=services"     '.ok == true and (.data | length > 0)'
+          check "Projects"               "?route=projects"     '.ok == true'
+          check "Full content bundle"    "?route=content"      '.ok == true and (.data.services | length > 0)'
+          check "Leads are NOT public"   "?route=admin/leads"  '.ok == false'
+          [ "$fail" = 0 ] && echo "ALL CHECKS PASSED" || { echo "SOME CHECKS FAILED"; exit 1; }
