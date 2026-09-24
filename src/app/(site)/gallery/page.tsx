@@ -27,7 +27,7 @@ export default async function GalleryPage() {
 
   return (
     <>
-      <PageHero eyebrow="Gallery" title="Interiors & manufacturing, in pictures" text="Browse by room — tap any image to view it larger or ask for a similar design on WhatsApp." image={items[0]?.src} />
+      <PageHero eyebrow="Gallery" title={<>Interiors &amp; manufacturing, <em>in pictures</em></>} text="Browse by room — tap any image to view it larger or ask for a similar design on WhatsApp." image={items[0]?.src} />
       <section className="section">
         <div className="container-x">
           <GalleryGrid items={items} categories={GALLERY_CATEGORIES} whatsappNumber={settings.whatsappNumber} />

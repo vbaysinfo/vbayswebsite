@@ -20,7 +20,7 @@ export default async function AboutPage() {
   const { settings, testimonials } = await getContent();
   return (
     <>
-      <PageHero eyebrow="About us" title="A design studio with its own factory" text={BRAND.statement} image={settings.aboutImage} />
+      <PageHero eyebrow="About us" title={<>A design studio with its <em>own factory</em></>} text={BRAND.statement} image={settings.aboutImage} />
       <section className="section">
         <div className="container-x grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
           <div>

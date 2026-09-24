@@ -1,5 +1,7 @@
 import { cn } from "@/lib/cn";
+import { Reveal } from "./Reveal";
 
+/** Editorial heading. Wrap a word in <em> to render it as the gold italic accent. */
 export function SectionHeading({
   eyebrow,
   title,
@@ -18,10 +20,10 @@ export function SectionHeading({
   light?: boolean;
 }) {
   return (
-    <div className={cn("max-w-3xl", align === "center" && "mx-auto text-center", className)}>
-      {eyebrow ? <p className={cn("eyebrow mb-4", light && "text-brass-soft", align === "center" && "justify-center")}>{eyebrow}</p> : null}
-      <Tag className={cn("text-3xl leading-[1.12] font-medium md:text-[2.75rem]", light ? "text-white" : "text-ink")}>{title}</Tag>
-      {text ? <p className={cn("mt-5 text-base leading-relaxed md:text-lg", light ? "text-white/75" : "text-muted")}>{text}</p> : null}
-    </div>
+    <Reveal className={cn("max-w-3xl", align === "center" && "mx-auto text-center", className)}>
+      {eyebrow ? <p className={cn("eyebrow mb-6", light && "text-brass", align === "center" && "justify-center")}>{eyebrow}</p> : null}
+      <Tag className={cn("text-[2.35rem] leading-[1.05] md:text-6xl [&_em]:gold-italic", light ? "text-white" : "text-ink")}>{title}</Tag>
+      {text ? <p className={cn("mt-6 max-w-2xl text-base leading-relaxed md:text-lg", align === "center" && "mx-auto", light ? "text-white/70" : "text-muted")}>{text}</p> : null}
+    </Reveal>
   );
 }

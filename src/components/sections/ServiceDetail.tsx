@@ -33,7 +33,7 @@ export function ServiceDetail({ service: s, settings, projects, city, path }: { 
     <>
       <ViewEvent event="service_view" service={s.slug} label={city} />
       <PageHero eyebrow={s.category || "Interiors"} title={h1} text={s.shortDescription} image={s.mainImage} alt={s.imageAlt}>
-        <Link href="#enquire" className="btn btn-lg bg-white text-ink hover:bg-brass-soft">Get Free Consultation</Link>
+        <Link href="#enquire" className="btn btn-lg btn-light">Get Free Consultation</Link>
         <WhatsAppButton number={settings.whatsappNumber} message={waMessage} label="Get Quote on WhatsApp" service={s.slug} size="lg" />
       </PageHero>
 

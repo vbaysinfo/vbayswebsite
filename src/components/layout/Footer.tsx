@@ -11,28 +11,35 @@ export async function Footer() {
   const { settings, services } = await getContent();
   const year = await getCurrentYear();
   return (
-    <footer className="bg-ink pb-28 text-white/75 md:pb-0">
+    <footer className="grain relative overflow-hidden bg-espresso pb-28 text-white/70 md:pb-0">
+      <div className="container-x border-b border-white/10 py-16 md:py-20">
+        <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+          <p className="max-w-2xl font-display text-4xl leading-tight text-white md:text-6xl">
+            Let&apos;s create a space <span className="gold-italic">you&apos;ll love</span> coming home to.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/get-quote" className="btn btn-light">{settings.primaryCta}</Link>
+            <WhatsAppButton number={settings.whatsappNumber} message={settings.whatsappDefaultMessage} label="WhatsApp" />
+          </div>
+        </div>
+      </div>
       <div className="container-x grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
         <div>
-          <p className="font-display text-2xl text-white">{settings.companyName}</p>
+          <p className="font-display text-3xl text-white">{settings.companyName}</p>
           <p className="mt-4 max-w-sm text-sm leading-relaxed">{settings.footerText}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <WhatsAppButton number={settings.whatsappNumber} message={settings.whatsappDefaultMessage} size="sm" />
-            <Link href="/get-quote" className="btn btn-sm btn-ghost-light">{settings.primaryCta}</Link>
-          </div>
           <div className="mt-6 flex gap-2">
             {settings.instagramUrl && (
-              <TrackedLink href={settings.instagramUrl} event="instagram_click" label="footer" className="grid h-10 w-10 place-items-center rounded-full border border-white/20 hover:bg-white hover:text-ink">
+              <TrackedLink href={settings.instagramUrl} event="instagram_click" label="footer" className="grid h-10 w-10 place-items-center rounded-full border border-white/20 hover:border-brass hover:bg-brass hover:text-white">
                 <InstagramIcon /><span className="sr-only">Instagram</span>
               </TrackedLink>
             )}
             {settings.facebookUrl && (
-              <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="grid h-10 w-10 place-items-center rounded-full border border-white/20 hover:bg-white hover:text-ink">
+              <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="grid h-10 w-10 place-items-center rounded-full border border-white/20 hover:border-brass hover:bg-brass hover:text-white">
                 <FacebookIcon /><span className="sr-only">Facebook</span>
               </a>
             )}
             {settings.youtubeUrl && (
-              <a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer" className="grid h-10 w-10 place-items-center rounded-full border border-white/20 hover:bg-white hover:text-ink">
+              <a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer" className="grid h-10 w-10 place-items-center rounded-full border border-white/20 hover:border-brass hover:bg-brass hover:text-white">
                 <YouTubeIcon /><span className="sr-only">YouTube</span>
               </a>
             )}
@@ -40,7 +47,7 @@ export async function Footer() {
         </div>
 
         <div>
-          <p className="mb-4 text-xs font-bold tracking-[0.18em] text-white uppercase">Interiors</p>
+          <p className="mb-4 text-[0.68rem] font-medium tracking-[0.28em] text-brass uppercase">Interiors</p>
           <ul className="space-y-2.5 text-sm">
             {NAV_INTERIORS.slice(1).map((l) => (
               <li key={l.href}><Link href={l.href} className="hover:text-white">{l.label}</Link></li>
@@ -49,7 +56,7 @@ export async function Footer() {
         </div>
 
         <div>
-          <p className="mb-4 text-xs font-bold tracking-[0.18em] text-white uppercase">Company</p>
+          <p className="mb-4 text-[0.68rem] font-medium tracking-[0.28em] text-brass uppercase">Company</p>
           <ul className="space-y-2.5 text-sm">
             {[["Projects", "/projects"], ["Gallery", "/gallery"], ["Our Factory", "/factory"], ["About", "/about"], ["Contact", "/contact"], ["Get a Quote", "/get-quote"]].map(([l, h]) => (
               <li key={h}><Link href={h} className="hover:text-white">{l}</Link></li>
@@ -58,7 +65,7 @@ export async function Footer() {
         </div>
 
         <div className="space-y-4 text-sm">
-          <p className="mb-4 text-xs font-bold tracking-[0.18em] text-white uppercase">Visit & Contact</p>
+          <p className="mb-4 text-[0.68rem] font-medium tracking-[0.28em] text-brass uppercase">Visit & Contact</p>
           <p className="flex gap-3"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brass" /><span><span className="font-semibold text-white">Studio: </span>{settings.officeAddress}</span></p>
           <p className="flex gap-3"><Factory className="mt-0.5 h-4 w-4 shrink-0 text-brass" /><span><span className="font-semibold text-white">Factory: </span>{settings.factoryAddress}</span></p>
           <CallButton phone={settings.phone} className="flex gap-3 hover:text-white"><Phone className="h-4 w-4 text-brass" />{settings.phone}</CallButton>
@@ -88,8 +95,11 @@ export async function Footer() {
         </div>
       )}
 
+      <div aria-hidden className="container-x select-none overflow-hidden pt-4">
+        <p className="whitespace-nowrap font-display text-[17vw] leading-[0.8] text-white/[0.04] lg:text-[12rem]">{settings.companyName}</p>
+      </div>
       <div className="border-t border-white/10">
-        <div className="container-x flex flex-col gap-2 py-6 text-xs md:flex-row md:justify-between">
+        <div className="container-x flex flex-col gap-2 py-6 text-xs tracking-wide md:flex-row md:justify-between">
           <p>© {year} {settings.companyName}. All rights reserved.</p>
           <p>Design → Manufacturing → Installation</p>
         </div>

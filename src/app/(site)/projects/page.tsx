@@ -15,7 +15,7 @@ export default async function ProjectsPage() {
   const { settings, projects } = await getContent();
   return (
     <>
-      <PageHero eyebrow="Projects" title="Completed projects" text="Real homes and workplaces — designed in our studio, made in our factory and installed by our team." image={projects[0]?.coverImage} />
+      <PageHero eyebrow="Projects" title={<>Completed <em>projects</em></>} text="Real homes and workplaces — designed in our studio, made in our factory and installed by our team." image={projects[0]?.coverImage} />
       <section className="section">
         <div className="container-x">
           <ProjectsFilter projects={projects} categories={GALLERY_CATEGORIES.filter((c) => c !== "Factory")} />

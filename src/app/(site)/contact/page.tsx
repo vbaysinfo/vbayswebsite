@@ -18,7 +18,7 @@ export default async function ContactPage() {
   const s = await getSettings();
   return (
     <>
-      <PageHero eyebrow="Contact" title="Let's talk about your space" text="Call, WhatsApp, or send us a message — our design team usually responds within working hours.">
+      <PageHero eyebrow="Contact" title={<>Let&apos;s talk about <em>your space</em></>} text="Call, WhatsApp, or send us a message — our design team usually responds within working hours.">
         <CallButton phone={s.phone} size="lg" className="!border-white !text-white hover:!bg-white hover:!text-ink" />
         <WhatsAppButton number={s.whatsappNumber} message={s.whatsappDefaultMessage} label="WhatsApp" size="lg" />
       </PageHero>

@@ -12,13 +12,18 @@ import type { Settings } from "@/lib/types";
 function Logo({ settings, light }: { settings: Settings; light: boolean }) {
   if (settings.logoUrl) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={settings.logoUrl} alt={settings.companyName} className="h-9 w-auto md:h-10" />;
+    return <img src={settings.logoUrl} alt={settings.companyName} className="h-10 w-auto md:h-11" />;
   }
   const [first, ...rest] = settings.companyName.split(" ");
   return (
-    <span className={cn("font-display text-[1.35rem] leading-none tracking-tight md:text-2xl", light ? "text-white" : "text-ink")}>
-      {first}
-      <span className={light ? "text-brass-soft" : "text-brass"}> {rest.join(" ")}</span>
+    <span className="flex flex-col leading-none">
+      <span className={cn("font-display text-[1.55rem] tracking-tight md:text-[1.8rem]", light ? "text-white" : "text-ink")}>
+        {first}
+        <span className="gold-italic"> {rest.join(" ")}</span>
+      </span>
+      <span className={cn("mt-1 text-[0.56rem] font-medium tracking-[0.34em] uppercase", light ? "text-white/60" : "text-muted")}>
+        Design · Manufacture · Install
+      </span>
     </span>
   );
 }
@@ -35,7 +40,16 @@ export function HeaderClient({ settings }: { settings: Settings }) {
     setOpen(false);
     setInteriorsOpen(false);
   }
-  const transparent = pathname === "/" && !scrolled && !open;
+  // Transparent header with light text when the page opens with a dark hero.
+  const [darkTop, setDarkTop] = useState(pathname === "/");
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      const first = document.querySelector("main > section:first-child, main > div:first-child > section:first-child");
+      setDarkTop(Boolean(first?.classList.contains("bg-espresso")));
+    });
+    return () => cancelAnimationFrame(id);
+  }, [pathname]);
+  const transparent = darkTop && !scrolled && !open;
 
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 24);
@@ -53,10 +67,10 @@ export function HeaderClient({ settings }: { settings: Settings }) {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
-        transparent ? "bg-gradient-to-b from-black/45 to-transparent" : "border-b border-line bg-paper/95 backdrop-blur",
+        transparent ? "bg-transparent" : "border-b border-line/70 bg-paper/90 backdrop-blur-md",
       )}
     >
-      <div className="container-x flex h-[4.5rem] items-center justify-between gap-4 md:h-20">
+      <div className="container-x flex h-[4.75rem] items-center justify-between gap-4 md:h-[5.5rem]">
         <Link href="/" aria-label={`${settings.companyName} home`} className="shrink-0">
           <Logo settings={settings} light={transparent} />
         </Link>
@@ -68,18 +82,18 @@ export function HeaderClient({ settings }: { settings: Settings }) {
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-1 rounded-full px-3.5 py-2 text-[0.92rem] font-semibold transition-colors",
+                    "flex items-center gap-1 px-3 py-2 text-[0.74rem] font-medium tracking-[0.18em] uppercase transition-colors",
                     transparent ? "text-white/90 hover:text-white" : "text-ink-soft hover:text-ink",
-                    isActive(item.href) && (transparent ? "text-white" : "text-brass-dark"),
+                    isActive(item.href) && "text-brass",
                   )}
                 >
                   {item.label}
-                  <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" aria-hidden />
+                  <ChevronDown className="h-3.5 w-3.5 transition-transform group-hover:rotate-180" aria-hidden />
                 </Link>
                 <div className="invisible absolute left-1/2 top-full w-[34rem] -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
-                  <div className="card grid grid-cols-2 gap-1 p-3">
+                  <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line shadow-lift">
                     {item.children.map((c) => (
-                      <Link key={c.href} href={c.href} className="rounded-xl px-4 py-3 text-sm font-semibold text-ink-soft transition-colors hover:bg-stone hover:text-ink">
+                      <Link key={c.href} href={c.href} className="bg-paper px-5 py-3.5 font-display text-lg text-ink-soft transition-colors hover:bg-white hover:text-brass-dark">
                         {c.label}
                       </Link>
                     ))}
@@ -91,9 +105,9 @@ export function HeaderClient({ settings }: { settings: Settings }) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "rounded-full px-3.5 py-2 text-[0.92rem] font-semibold transition-colors",
+                  "px-3 py-2 text-[0.74rem] font-medium tracking-[0.18em] uppercase transition-colors",
                   transparent ? "text-white/90 hover:text-white" : "text-ink-soft hover:text-ink",
-                  isActive(item.href) && (transparent ? "text-white" : "text-brass-dark"),
+                  isActive(item.href) && "text-brass",
                 )}
               >
                 {item.label}
@@ -108,9 +122,9 @@ export function HeaderClient({ settings }: { settings: Settings }) {
             message={settings.whatsappDefaultMessage}
             label="WhatsApp"
             size="sm"
-            className="hidden sm:inline-flex"
+            className="hidden sm:inline-flex !px-4"
           />
-          <Link href="/get-quote" className={cn("btn btn-sm hidden md:inline-flex", transparent ? "bg-white text-ink hover:bg-brass-soft" : "btn-primary")}>
+          <Link href="/get-quote" className={cn("btn btn-sm hidden md:inline-flex", transparent ? "btn-light" : "btn-primary")}>
             {settings.primaryCta}
           </Link>
           <button
@@ -136,7 +150,7 @@ export function HeaderClient({ settings }: { settings: Settings }) {
                     type="button"
                     onClick={() => setInteriorsOpen((v) => !v)}
                     aria-expanded={interiorsOpen}
-                    className="flex w-full items-center justify-between py-4 text-left text-lg font-semibold"
+                    className="flex w-full items-center justify-between py-4 text-left font-display text-3xl"
                   >
                     {item.label}
                     <ChevronDown className={cn("h-5 w-5 transition-transform", interiorsOpen && "rotate-180")} />
@@ -152,7 +166,7 @@ export function HeaderClient({ settings }: { settings: Settings }) {
                   )}
                 </div>
               ) : (
-                <Link key={item.href} href={item.href} className={cn("border-b border-line py-4 text-lg font-semibold", isActive(item.href) && "text-brass-dark")}>
+                <Link key={item.href} href={item.href} className={cn("border-b border-line py-4 font-display text-3xl", isActive(item.href) && "gold-italic")}>
                   {item.label}
                 </Link>
               ),

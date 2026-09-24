@@ -26,7 +26,7 @@ export default async function FactoryPage() {
     <>
       <PageHero
         eyebrow="Our factory"
-        title="Designed by Experts. Manufactured in Our Factory."
+        title={<>Designed by Experts. <em>Manufactured</em> in Our Factory.</>}
         text="Our in-house manufacturing facility allows us to coordinate design, production, quality and delivery through one system."
         image={settings.factoryHeroImage}
         alt="Modular furniture manufacturing facility"
@@ -54,12 +54,12 @@ export default async function FactoryPage() {
         </div>
       </section>
 
-      <section className="section bg-ink text-white">
+      <section className="grain section bg-espresso text-white">
         <div className="container-x">
           <SectionHeading light eyebrow="Factory process" title="15 steps from your requirement to installation" />
           <ol className="mt-14 grid gap-px overflow-hidden rounded-[var(--radius-card)] bg-white/10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {process.map((p, i) => (
-              <li key={p.id} className="bg-ink p-6">
+              <li key={p.id} className="bg-espresso p-6">
                 <span className="font-display text-3xl text-brass">{String(i + 1).padStart(2, "0")}</span>
                 <p className="mt-3 font-semibold">{p.title}</p>
                 {p.description && <p className="mt-1.5 text-sm leading-relaxed text-white/65">{p.description}</p>}

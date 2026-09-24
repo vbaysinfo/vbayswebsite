@@ -25,16 +25,16 @@ export default async function InteriorsPage() {
     <>
       <PageHero
         eyebrow="Interior services"
-        title="Interior Solutions Designed Around You"
+        title={<>Interior Solutions <em>Designed</em> Around You</>}
         text="Complete home, modular and commercial interiors — planned by our designers, produced in our factory and installed by our own team."
         image={services[0]?.mainImage}
       >
-        <Link href="/get-quote" className="btn btn-lg bg-white text-ink hover:bg-brass-soft">{settings.primaryCta}</Link>
+        <Link href="/get-quote" className="btn btn-lg btn-light">{settings.primaryCta}</Link>
         <WhatsAppButton number={settings.whatsappNumber} message={settings.whatsappDefaultMessage} label="Discuss Your Interior" size="lg" />
       </PageHero>
       <section className="section">
-        <div className="container-x grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((s, i) => <ServiceCard key={s.serviceId} service={s} whatsappNumber={settings.whatsappNumber} priority={i < 3} />)}
+        <div className="container-x grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+          {services.map((s, i) => <ServiceCard key={s.serviceId} service={s} whatsappNumber={settings.whatsappNumber} priority={i < 3} index={i} />)}
         </div>
       </section>
       <DesignServices />

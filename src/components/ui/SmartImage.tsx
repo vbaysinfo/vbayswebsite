@@ -33,19 +33,22 @@ export function SmartImage({ src, alt, label, className, fill, ...rest }: Props)
   const [failed, setFailed] = useState(false);
   const url = src ? resolveImageUrl(src) : "";
   if (!url || failed) {
+    // Elegant architectural placeholder: warm plaster gradient + line-drawn arch.
     return (
       <div
         role="img"
         aria-label={alt}
         className={cn(
-          "flex items-center justify-center overflow-hidden bg-gradient-to-br from-sand via-stone to-brass-soft text-brass-dark",
+          "flex items-center justify-center overflow-hidden bg-[radial-gradient(120%_90%_at_30%_20%,#f4ece0_0%,#e6d9c6_45%,#cdb99c_100%)] text-brass-dark",
           fill ? "absolute inset-0" : "",
           className,
         )}
       >
-        <svg viewBox="0 0 120 80" className="h-1/4 max-h-14 w-auto opacity-30" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden>
-          <path d="M8 72h104M16 72V30l44-22 44 22v42" />
-          <path d="M34 72V44h22v28M66 44h22v14H66z" />
+        <svg viewBox="0 0 120 120" className="h-1/3 max-h-28 w-auto opacity-35" fill="none" stroke="currentColor" strokeWidth="0.8" aria-hidden>
+          <path d="M30 108V56a30 30 0 0 1 60 0v52" />
+          <path d="M40 108V60a20 20 0 0 1 40 0v48" />
+          <path d="M14 108h92" />
+          <circle cx="60" cy="40" r="3" />
         </svg>
         {label ? <span className="sr-only">{label}</span> : null}
       </div>

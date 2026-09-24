@@ -18,7 +18,7 @@ export default async function GetQuotePage() {
       <div className="container-x grid items-start gap-12 lg:grid-cols-[0.85fr_1.15fr]">
         <div>
           <p className="eyebrow">Free consultation</p>
-          <h1 className="mt-5 text-4xl leading-tight font-medium md:text-5xl">Let&apos;s Design Your Dream Space</h1>
+          <h1 className="mt-6 text-5xl leading-[1.02] md:text-7xl">Let&apos;s Design Your <em className="gold-italic">Dream</em> Space</h1>
           <p className="mt-5 text-lg text-muted">Six quick steps. No obligation. A designer will call you back.</p>
           <ul className="mt-8 space-y-3 text-ink-soft">
             {["Free design consultation", "Site visit & measurements", "3D design before manufacturing", "Transparent, itemised quotation"].map((t) => (
