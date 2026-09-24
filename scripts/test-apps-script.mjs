@@ -54,6 +54,7 @@ const ss = {
   setSpreadsheetTimeZone() {},
   getUrl: () => "https://docs.google.com/spreadsheets/d/test",
   getId: () => "SHEET1",
+  getName: () => ss.name,
 };
 // Mock Drive: folders by ID with subfolders, files and sharing state.
 const folders = new Map();
@@ -62,6 +63,7 @@ function makeFolder(id, name) {
   const f = {
     id, name, sharing: "inherited", children: [], fileList: [],
     getId: () => id,
+    getName: () => name,
     getFoldersByName: (n) => iter(f.children.filter((c) => c.name === n)),
     createFolder: (n) => { const c = makeFolder(`${id}/${n}`, n); f.children.push(c); return c; },
     getFilesByName: (n) => iter(f.fileList.filter((x) => x.name === n)),
@@ -81,6 +83,7 @@ const mails = [];
 const files = [];
 const fetches = [];
 const triggers = [];
+const trashed = [];
 
 const ctx = {
   console,
@@ -95,13 +98,13 @@ const ctx = {
   PropertiesService: { getScriptProperties: () => ({ getProperty: (k) => props.get(k) ?? null, setProperty: (k, v) => props.set(k, v) }) },
   LockService: { getScriptLock: () => ({ waitLock() {}, tryLock: () => true, releaseLock() {} }) },
   CacheService: { getScriptCache: () => ({ get: (k) => cache.get(k) ?? null, put: (k, v) => cache.set(k, v) }) },
-  ContentService: { MimeType: { JSON: "json" }, createTextOutput: (t) => ({ text: t, setMimeType() { return this; } }) },
+  ContentService: { MimeType: { JSON: "json" }, createTextOutput: (t) => ({ text: t, getContent: () => t, setMimeType() { return this; } }) },
   MailApp: { sendEmail: (to, subject, body) => mails.push({ to, subject, body }) },
   DriveApp: {
     Access: { PRIVATE: "PRIVATE" },
     Permission: { NONE: "NONE" },
     getFolderById: (id) => { const f = folders.get(id); if (!f) throw new Error("No folder"); return f; },
-    getFileById: (id) => ({ moveTo: (folder) => { ss.parent = folder.getId(); folder.fileList.push({ name: ss.name, getId: () => id }); } }),
+    getFileById: (id) => ({ setTrashed() { trashed.push(id); }, moveTo: (folder) => { ss.parent = folder.getId(); folder.fileList.push({ name: ss.name, getId: () => id }); } }),
   },
   UrlFetchApp: { fetch: (url, opts) => { fetches.push({ url, opts }); return { getResponseCode: () => 200, getContentText: () => JSON.stringify(mockGraph(url, opts)), getBlob: () => ({ name: "", setName(n) { this.name = n; return this; } }) }; } },
   ScriptApp: { getOAuthToken: () => "tok", getProjectTriggers: () => [], newTrigger: (fn) => { const b = { timeBased: () => b, everyMinutes: () => b, atHour: () => b, everyDays: () => b, inTimezone: () => b, everyHours: () => b, forSpreadsheet: () => b, onEdit: () => b, onOpen: () => b, create: () => { triggers.push(fn); return b; } }; return b; } },
@@ -114,13 +117,14 @@ const ctx = {
     },
     getUuid: () => crypto.randomUUID(),
     base64Decode: (s) => [...Buffer.from(s, "base64")],
+    base64Encode: (s) => Buffer.from(s).toString("base64"),
     newBlob: (bytes, mime, name) => ({ bytes, mime, name }),
     sleep() {},
   },
 };
 function createFile(blob, folder) {
   const file = { name: blob.name, folder: folder?.name, sharing: "inherited", created: Date.now() + folder.fileList.length,
-    getUrl: () => `https://drive.google.com/file/d/${blob.name}/view`, setDescription() {},
+    getUrl: () => `https://drive.google.com/file/d/FILEID${String(files.length).padStart(24, "0")}/view`, setDescription() {},
     setSharing(a) { file.sharing = a; }, getDateCreated: () => file.created, setTrashed() { folder.fileList = folder.fileList.filter((x) => x !== file); } };
   files.push(file);
   folder.fileList.push(file);
@@ -295,6 +299,16 @@ test("triggers include daily Excel backup; backup keeps latest 14 .xlsx files", 
   assert.equal(backups.length, 14);
   assert.match(backups[0].name, /\.xlsx$/);
   assert.ok(fetches.some((f) => f.url.includes("/spreadsheets/d/SHEET1/export?format=xlsx")));
+});
+
+test("selfTest() passes against the configured sheet and cleans up after itself", () => {
+  const leadsBefore = sheets.get("LEADS").getLastRow();
+  const eventsBefore = sheets.get("EVENTS").getLastRow();
+  const report = ctx.selfTest();
+  assert.match(report, /ALL CHECKS PASSED/, report);
+  assert.equal(sheets.get("LEADS").getLastRow(), leadsBefore);
+  assert.equal(sheets.get("EVENTS").getLastRow(), eventsBefore);
+  assert.equal(trashed.length, 1);
 });
 
 console.log(`\n${passed} Apps Script tests passed`);

@@ -178,3 +178,76 @@ function onOpen() {
 function menuRefresh_() {
   SpreadsheetApp.getActive().toast(refreshWebsite(), 'Website', 5);
 }
+
+/**
+ * One-click health check — run from the editor after setup().
+ * Exercises the real spreadsheet, Drive folder and API routes, then removes
+ * its own test data. Read the result in the Execution log.
+ */
+function selfTest() {
+  var results = [];
+  var check = function (name, fn) {
+    try {
+      var detail = fn();
+      results.push('PASS  ' + name + (detail ? ' — ' + detail : ''));
+    } catch (err) {
+      results.push('FAIL  ' + name + ' — ' + (err && err.message || err));
+    }
+  };
+  var secret = prop_('API_SECRET');
+  var call = function (route, data) {
+    var out = JSON.parse(doPost({ postData: { contents: JSON.stringify({ route: route, secret: secret, data: data || {} }) } }).getContent());
+    if (!out.ok) throw new Error(out.error);
+    return out.data;
+  };
+  var leadId = '';
+  var fileUrl = '';
+
+  check('Drive folder', function () { return driveFolder_().getName(); });
+  check('Spreadsheet in folder', function () { return ss_().getName() + ' → ' + ss_().getUrl(); });
+  check('All 12 tabs with headers', function () {
+    TEXT_SHEETS.forEach(function (n) {
+      var hs = headers_(sheet_(n));
+      SCHEMA[n].forEach(function (h) { if (hs.indexOf(h) === -1) throw new Error(n + ' missing column ' + h); });
+    });
+    return TEXT_SHEETS.length + ' tabs OK';
+  });
+  check('API secret', function () { if (!secret) throw new Error('API_SECRET missing — run setup()'); return 'set'; });
+  check('Website content API', function () {
+    var c = call('content');
+    return c.services.length + ' services, ' + c.projects.length + ' projects, company "' + c.settings.companyName + '"';
+  });
+  check('Create lead (+ private upload)', function () {
+    var r = call('lead', {
+      name: 'SELF TEST — delete me', phone: '+919999999999', requirement: 'Self Test', city: 'Test',
+      submissionId: 'selftest-' + Utilities.getUuid(), attribution: { source: 'Website', utmCampaign: 'selftest' },
+      uploads: [{ field: 'floorPlan', mimeType: 'application/pdf', base64: Utilities.base64Encode('%PDF-1.4 self test') }],
+    });
+    leadId = r.leadId;
+    var lead = call('admin/leads').filter(function (l) { return l.leadId === leadId; })[0];
+    if (!lead) throw new Error('lead row not found');
+    fileUrl = lead.fileUrl;
+    return leadId + ' saved, upload stored' + (prop_('NOTIFY_EMAIL') ? ', alert emailed to ' + prop_('NOTIFY_EMAIL') : ' (set NOTIFY_EMAIL for email alerts)');
+  });
+  check('Update lead status', function () {
+    var u = call('admin/lead-update', { leadId: leadId, actor: 'selfTest', update: { status: 'Contacted', remarks: 'self test' } });
+    if (u.status !== 'Contacted') throw new Error('status not updated');
+    return 'New → Contacted';
+  });
+  check('Track WhatsApp click', function () {
+    call('event', { eventType: 'whatsapp_click', page: '/selftest', label: 'selftest', attribution: { utmCampaign: 'selftest' } });
+    return 'EVENTS row written';
+  });
+  check('Clean up test data', function () {
+    deleteRowById_('LEADS', 'Lead ID', leadId);
+    deleteRowById_('EVENTS', 'Label', 'selftest');
+    var m = String(fileUrl).match(/[-\w]{25,}/);
+    if (m) DriveApp.getFileById(m[0]).setTrashed(true);
+    return 'removed';
+  });
+
+  var failed = results.filter(function (r) { return r.indexOf('FAIL') === 0; }).length;
+  var report = results.join('\n') + '\n\n' + (failed ? failed + ' check(s) FAILED' : 'ALL CHECKS PASSED ✔');
+  console.log(report);
+  return report;
+}

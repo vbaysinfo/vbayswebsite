@@ -32,9 +32,10 @@ The spreadsheet is **created automatically** in this Google Drive folder:
    - `recomputeCampaigns`: every 6 hours
    - `onSheetEdit`: refreshes the website after content edits
    - `onOpen`: adds the **Website** menu to the spreadsheet
-6. **Keep the folder private.** Uploads and backups contain customer data. The script turns off link-sharing on its subfolders and files, but anyone you share the *parent* folder with directly can still see them.
+6. **Check it works:** choose **`selfTest`** → **Run**. The Execution log should end with **ALL CHECKS PASSED ✔**. It creates a test lead with an upload, updates it, logs a WhatsApp click, then deletes all of that test data. Any `FAIL` line names the part that needs fixing.
+7. **Keep the folder private.** Uploads and backups contain customer data. The script turns off link-sharing on its subfolders and files, but anyone you share the *parent* folder with directly can still see them.
 
-7. **Project Settings → Script Properties**:
+8. **Project Settings → Script Properties**:
 
    | Property | Required | Value |
    |---|---|---|
@@ -48,7 +49,7 @@ The spreadsheet is **created automatically** in this Google Drive folder:
    | `FB_PAGE_ID`, `FB_PAGE_TOKEN` | for Facebook | See step 2 |
    | `GRAPH_VERSION` | optional | Default `v23.0` |
 
-8. **Deploy → New deployment → Web app**
+9. **Deploy → New deployment → Web app**
    - Execute as: **Me**
    - Who has access: **Anyone** (every data request still needs `API_SECRET`; anonymous GETs return only public, active website content)
    - Copy the **Web app URL**.

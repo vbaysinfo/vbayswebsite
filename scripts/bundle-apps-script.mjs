@@ -14,7 +14,7 @@ const header = `/**
  *      → open appsscript.json → replace it with apps-script/dist/appsscript.json. Save.
  *   4. Function dropdown → setup → Run → Review permissions → choose your account → Allow.
  *      The log shows the new spreadsheet link (created in your Drive folder).
- *   5. Function dropdown → setupTriggers → Run.
+ *   5. Function dropdown → setupTriggers → Run. Then selfTest → Run → log must say ALL CHECKS PASSED.
  *   6. Deploy → New deployment → gear → Web app → Execute as: Me, Who has access: Anyone
  *      → Deploy → copy the Web app URL.
  *   7. Project Settings → Script Properties → copy API_SECRET.
