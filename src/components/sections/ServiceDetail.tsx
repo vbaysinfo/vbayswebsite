@@ -108,7 +108,7 @@ export function ServiceDetail({ service: s, settings, projects, city, path }: { 
         <section className="section">
           <div className="container-x">
             <SectionHeading eyebrow="Related projects" title={`Recent ${s.serviceName.toLowerCase()} projects`} />
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{related.map((p) => <ProjectCard key={p.projectId} project={p} />)}</div>
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{related.map((p) => <ProjectCard key={p.projectId} project={p} whatsappNumber={settings.whatsappNumber} />)}</div>
           </div>
         </section>
       )}

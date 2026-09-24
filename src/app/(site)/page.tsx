@@ -9,6 +9,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { WhatsAppButton } from "@/components/cta/TrackedLinks";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { ProjectCard } from "@/components/sections/ProjectCard";
+import { projectImages } from "@/lib/project-images";
 import { ModularSolutions } from "@/components/sections/ModularSolutions";
 import { BeforeAfterSlider } from "@/components/sections/BeforeAfterSlider";
 import { ProcessTimeline } from "@/components/sections/ProcessTimeline";
@@ -170,7 +171,7 @@ export default async function HomePage() {
             <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredProjects.map((p, i) => (
                 <Reveal key={p.projectId} delay={(i % 3) * 100} className={i === 0 ? "sm:col-span-2 lg:row-span-2" : ""}>
-                  <ProjectCard project={p} variant={i === 0 ? "feature" : i === 2 ? "arch" : "default"} />
+                  <ProjectCard project={p} variant={i === 0 ? "feature" : i === 2 ? "arch" : "default"} images={projectImages(p, gallery)} whatsappNumber={settings.whatsappNumber} />
                 </Reveal>
               ))}
             </div>

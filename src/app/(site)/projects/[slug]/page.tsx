@@ -8,6 +8,7 @@ import { WA_MESSAGES } from "@/lib/whatsapp";
 import { PageHero } from "@/components/sections/PageHero";
 import { GalleryGrid } from "@/components/sections/GalleryGrid";
 import { ProjectCard } from "@/components/sections/ProjectCard";
+import { projectImages } from "@/lib/project-images";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { WhatsAppButton } from "@/components/cta/TrackedLinks";
@@ -71,7 +72,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
         <section className="section bg-stone">
           <div className="container-x">
             <SectionHeading eyebrow="More projects" title="You may also like" />
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{more.map((m) => <ProjectCard key={m.projectId} project={m} />)}</div>
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{more.map((m) => <ProjectCard key={m.projectId} project={m} images={projectImages(m, gallery)} whatsappNumber={settings.whatsappNumber} />)}</div>
           </div>
         </section>
       )}

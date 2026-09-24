@@ -20,9 +20,11 @@ export const NAV_INTERIORS = [
   { label: "Commercial Interiors", href: "/interiors/commercial-interiors" },
 ];
 
-export const NAV_MAIN = [
+type NavItem = { label: string; href: string; children?: { label: string; href: string }[] };
+
+// Header menu. Interior service pages stay reachable from the home page and footer.
+export const NAV_MAIN: NavItem[] = [
   { label: "Home", href: "/" },
-  { label: "Interiors", href: "/interiors", children: NAV_INTERIORS },
   { label: "Projects", href: "/projects" },
   { label: "Gallery", href: "/gallery" },
   { label: "Factory", href: "/factory" },
