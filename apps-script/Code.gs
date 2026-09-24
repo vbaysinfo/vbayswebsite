@@ -9,7 +9,9 @@
  *
  * Script Properties (Project Settings → Script Properties):
  *   API_SECRET            (required) long random string, same as APPS_SCRIPT_SECRET on the website
- *   UPLOAD_FOLDER_ID      (optional) private Drive folder for floor plans; auto-created if blank
+ *   DRIVE_FOLDER_ID       (optional) overrides DEFAULT_DRIVE_FOLDER_ID (Setup.gs) — where the sheet, uploads & backups live
+ *   SPREADSHEET_ID        (auto)     set by setup() when it creates the spreadsheet in the Drive folder
+ *   UPLOAD_FOLDER_ID      (auto)     private "Lead Uploads" subfolder, created by setup()
  *   NOTIFY_EMAIL          (optional) comma-separated emails for new-lead alerts & follow-up digest
  *   WEBSITE_URL           (optional) e.g. https://www.example.com — for "Refresh website" after edits
  *   REVALIDATE_SECRET     (optional) same as REVALIDATE_SECRET on the website
@@ -105,7 +107,16 @@ function publicRoute_(route, params) {
 
 // ─── Sheet helpers ─────────────────────────────────────────────────────────
 
-function ss_() { return SpreadsheetApp.getActiveSpreadsheet(); }
+var ss__ = null;
+/** The website spreadsheet: created by setup() inside the Drive folder (standalone script),
+ *  or the container spreadsheet if this script is bound to a sheet. */
+function ss_() {
+  if (ss__) return ss__;
+  var id = prop_('SPREADSHEET_ID');
+  ss__ = id ? SpreadsheetApp.openById(id) : SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss__) throw withCode_(new Error('Spreadsheet not created yet — run setup()'), 'NOT_CONFIGURED');
+  return ss__;
+}
 
 function sheet_(name) {
   var sh = ss_().getSheetByName(name);
@@ -302,7 +313,7 @@ function findDuplicate_(sh, d) {
 function uploadFolder_() {
   var id = prop_('UPLOAD_FOLDER_ID');
   if (id) return DriveApp.getFolderById(id);
-  var folder = DriveApp.createFolder('Website Lead Uploads (private)');
+  var folder = subfolder_('Lead Uploads (private)');
   PropertiesService.getScriptProperties().setProperty('UPLOAD_FOLDER_ID', folder.getId());
   return folder;
 }
@@ -319,6 +330,7 @@ function saveUploads_(leadId, uploads) {
     var field = String(u.field || 'file').replace(/[^A-Za-z]/g, '').slice(0, 20);
     var file = folder.createFile(Utilities.newBlob(bytes, u.mimeType, leadId + '-' + field + '.' + ext));
     file.setDescription('Lead ' + leadId);
+    makePrivate_(file);
     // Files inherit the folder's (private) sharing — never shared publicly.
     return file.getUrl();
   });

@@ -1,19 +1,98 @@
 /**
  * One-time setup & admin menu.
- *   1. Create a new Google Sheet → Extensions → Apps Script.
+ *   1. Go to script.google.com → New project (a standalone script — no sheet needed).
  *   2. Add Code.gs, Social.gs, Setup.gs, Schema.gs and appsscript.json from this folder.
- *   3. Project Settings → Script Properties → add API_SECRET (and optional properties, see Code.gs).
- *   4. Run setup() once and approve the permissions.
- *   5. Run setupTriggers() once.
- *   6. Deploy → New deployment → Web app (Execute as: Me · Access: Anyone) → copy the URL
+ *   3. Run setup() once and approve the permissions. It automatically:
+ *        • creates the "VBays Interiors — Website Data" spreadsheet INSIDE the Drive folder below
+ *        • creates all 12 tabs with headers, drop-downs and starter content
+ *        • creates private "Lead Uploads (private)" and "Excel Backups" subfolders
+ *        • generates API_SECRET (Project Settings → Script Properties)
+ *      Re-running setup() is safe: it reuses the same spreadsheet and never deletes data.
+ *   4. Run setupTriggers() once.
+ *   5. Deploy → New deployment → Web app (Execute as: Me · Access: Anyone) → copy the URL
  *      into the website's APPS_SCRIPT_URL environment variable.
+ *
+ * (Alternatively paste the files into a sheet's Extensions → Apps Script; then that sheet is used.)
  */
+
+// Google Drive folder that holds the spreadsheet, customer uploads and Excel backups.
+// https://drive.google.com/drive/folders/1_eMSIYfdKgBis4sOaWs_yKBbAmH0-yRu
+// Override without editing code via the DRIVE_FOLDER_ID Script Property.
+var DEFAULT_DRIVE_FOLDER_ID = '1_eMSIYfdKgBis4sOaWs_yKBbAmH0-yRu';
+var SPREADSHEET_NAME = 'VBays Interiors — Website Data';
+var BACKUPS_TO_KEEP = 14;
+
+function driveFolder_() {
+  var id = prop_('DRIVE_FOLDER_ID') || DEFAULT_DRIVE_FOLDER_ID;
+  try {
+    return DriveApp.getFolderById(id);
+  } catch (err) {
+    throw withCode_(new Error('Cannot open Drive folder ' + id + '. Run this script with the Google account that owns (or can edit) that folder.'), 'NOT_CONFIGURED');
+  }
+}
+
+function subfolder_(name) {
+  var parent = driveFolder_();
+  var it = parent.getFoldersByName(name);
+  var folder = it.hasNext() ? it.next() : parent.createFolder(name);
+  makePrivate_(folder);
+  return folder;
+}
+
+/** Turns off link-sharing so customer files are never publicly accessible. */
+function makePrivate_(item) {
+  try {
+    item.setSharing(DriveApp.Access.PRIVATE, DriveApp.Permission.NONE);
+  } catch (err) {
+    console.warn('Could not change sharing (domain policy?): ' + err);
+  }
+}
+
+/** Finds or creates the website spreadsheet inside the Drive folder and remembers its ID. */
+function ensureSpreadsheet_() {
+  var props = PropertiesService.getScriptProperties();
+  var id = props.getProperty('SPREADSHEET_ID');
+  if (id) {
+    try { return SpreadsheetApp.openById(id); } catch (err) { /* deleted — recreate below */ }
+  }
+  var bound = SpreadsheetApp.getActiveSpreadsheet();
+  if (bound) {
+    props.setProperty('SPREADSHEET_ID', bound.getId());
+    return bound;
+  }
+  var folder = driveFolder_();
+  var existing = folder.getFilesByName(SPREADSHEET_NAME);
+  var ss = existing.hasNext() ? SpreadsheetApp.openById(existing.next().getId()) : SpreadsheetApp.create(SPREADSHEET_NAME);
+  DriveApp.getFileById(ss.getId()).moveTo(folder);
+  props.setProperty('SPREADSHEET_ID', ss.getId());
+  ss__ = ss;
+  return ss;
+}
+
+/**
+ * Daily .xlsx (Excel) backup of the whole spreadsheet into "Excel Backups",
+ * keeping the latest BACKUPS_TO_KEEP files. Contains customer data → private folder.
+ */
+function exportExcelBackup() {
+  var ss = ss_();
+  var url = 'https://docs.google.com/spreadsheets/d/' + ss.getId() + '/export?format=xlsx';
+  var blob = UrlFetchApp.fetch(url, { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() } }).getBlob();
+  var folder = subfolder_('Excel Backups');
+  var file = folder.createFile(blob.setName(SPREADSHEET_NAME + ' ' + now_().date + '.xlsx'));
+  makePrivate_(file);
+  var files = [];
+  var it = folder.getFiles();
+  while (it.hasNext()) files.push(it.next());
+  files.sort(function (a, b) { return b.getDateCreated() - a.getDateCreated(); });
+  files.slice(BACKUPS_TO_KEEP).forEach(function (f) { f.setTrashed(true); });
+  return file.getUrl();
+}
 
 var TEXT_SHEETS = ['SETTINGS', 'SERVICES', 'PROJECTS', 'GALLERY', 'BEFORE_AFTER', 'TESTIMONIALS', 'FACTORY', 'LEADS', 'EVENTS', 'SOCIAL_POSTS', 'CONTENT_CALENDAR', 'CAMPAIGNS'];
 var PRIVATE_SHEETS = ['LEADS', 'EVENTS'];
 
 function setup() {
-  var ss = ss_();
+  var ss = ensureSpreadsheet_();
   ss.setSpreadsheetTimeZone(TZ);
   TEXT_SHEETS.forEach(function (name) {
     var sh = ss.getSheetByName(name) || ss.insertSheet(name);
@@ -45,7 +124,11 @@ function setup() {
   if (!prop_('API_SECRET')) {
     PropertiesService.getScriptProperties().setProperty('API_SECRET', Utilities.getUuid() + Utilities.getUuid());
   }
-  return 'Setup complete. API_SECRET is in Project Settings → Script Properties.';
+  uploadFolder_();
+  subfolder_('Excel Backups');
+  var msg = 'Setup complete. Spreadsheet: ' + ss.getUrl() + ' — API_SECRET is in Project Settings → Script Properties.';
+  console.log(msg);
+  return msg;
 }
 
 function addValidation_() {
@@ -70,7 +153,11 @@ function setupTriggers() {
   ScriptApp.newTrigger('processScheduledPosts').timeBased().everyMinutes(15).create();
   ScriptApp.newTrigger('sendFollowUpDigest').timeBased().atHour(9).everyDays(1).inTimezone(TZ).create();
   ScriptApp.newTrigger('recomputeCampaigns').timeBased().everyHours(6).create();
+  ScriptApp.newTrigger('exportExcelBackup').timeBased().atHour(2).everyDays(1).inTimezone(TZ).create();
   ScriptApp.newTrigger('onSheetEdit').forSpreadsheet(ss_()).onEdit().create();
+  // Standalone script: install onOpen so the "Website" menu appears in the sheet.
+  // (A sheet-bound script already gets it from the simple onOpen trigger.)
+  if (!SpreadsheetApp.getActiveSpreadsheet()) ScriptApp.newTrigger('onOpen').forSpreadsheet(ss_()).onOpen().create();
   return 'Triggers installed.';
 }
 
@@ -81,6 +168,7 @@ function onOpen() {
     .addItem('Publish due social posts now', 'processScheduledPosts')
     .addItem('Recalculate campaign metrics', 'recomputeCampaigns')
     .addItem('Send follow-up digest now', 'sendFollowUpDigest')
+    .addItem('Save Excel (.xlsx) backup now', 'exportExcelBackup')
     .addSeparator()
     .addItem('Run setup (safe to re-run)', 'setup')
     .addItem('Install triggers', 'setupTriggers')

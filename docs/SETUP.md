@@ -4,20 +4,36 @@ Allow about 45 minutes. You need a Google account, a Meta Business account (for 
 
 ---
 
-## 1. Google Sheet + Apps Script API
+## 1. Google Sheet + Apps Script API (created automatically in your Drive folder)
 
-1. Create a new Google Sheet, for example **"VBays Interiors — Website"**.
-2. **Extensions → Apps Script**. Delete the default `Code.gs` contents.
-3. Create these files and paste in the matching file from `apps-script/`:
+The spreadsheet is **created automatically** in this Google Drive folder:
+**https://drive.google.com/drive/folders/1_eMSIYfdKgBis4sOaWs_yKBbAmH0-yRu**
+(set in `apps-script/Setup.gs` → `DEFAULT_DRIVE_FOLDER_ID`, or override it with the `DRIVE_FOLDER_ID` Script Property.)
+
+1. Sign in with the Google account that **owns (or can edit) that folder**, then open **script.google.com → New project**. Name it, for example, "VBays Interiors API".
+2. Create these files and paste in the matching file from `apps-script/`:
    `Code.gs`, `Social.gs`, `Setup.gs`, `Schema.gs`.
-4. **Project Settings (⚙)** → tick *Show "appsscript.json"* → paste `apps-script/appsscript.json` into it.
-5. In the editor, choose the function **`setup`** → **Run** → approve the permissions.
-   This creates all 12 tabs with headers, validation drop-downs and starter content. It also generates an `API_SECRET`.
-6. Run **`setupTriggers`** once. It installs these triggers:
+3. **Project Settings (⚙)** → tick *Show "appsscript.json"* → paste `apps-script/appsscript.json` into it.
+4. Choose the function **`setup`** → **Run** → approve the permissions. In the Drive folder it creates:
+
+   ```
+   📁 your folder
+   ├── 📊 VBays Interiors — Website Data     ← all 12 tabs, headers, drop-downs, starter content
+   ├── 📁 Lead Uploads (private)             ← customers' floor plans / reference images
+   └── 📁 Excel Backups                      ← daily .xlsx copy of the sheet (latest 14 kept)
+   ```
+
+   The execution log prints the spreadsheet link. `setup` also generates an `API_SECRET`. Re-running it is safe: it reuses the same spreadsheet, adds any missing tabs or columns, and never deletes data.
+   From then on, every website enquiry, WhatsApp/call click, social post and campaign metric is **written into that spreadsheet automatically**. Content you edit in the sheet updates the website.
+5. Run **`setupTriggers`** once. It installs these triggers:
    - `processScheduledPosts`: every 15 minutes (social publishing)
    - `sendFollowUpDigest`: daily at 9 AM IST
+   - `exportExcelBackup`: daily at 2 AM IST (Excel `.xlsx` backup into *Excel Backups*)
    - `recomputeCampaigns`: every 6 hours
    - `onSheetEdit`: refreshes the website after content edits
+   - `onOpen`: adds the **Website** menu to the spreadsheet
+6. **Keep the folder private.** Uploads and backups contain customer data. The script turns off link-sharing on its subfolders and files, but anyone you share the *parent* folder with directly can still see them.
+
 7. **Project Settings → Script Properties**:
 
    | Property | Required | Value |
@@ -26,7 +42,8 @@ Allow about 45 minutes. You need a Google account, a Meta Business account (for 
    | `NOTIFY_EMAIL` | recommended | Where new-lead alerts and the daily follow-up digest go |
    | `WEBSITE_URL` | recommended | `https://www.yourdomain.com` |
    | `REVALIDATE_SECRET` | recommended | A random string of 16+ characters. Also set it on the website |
-   | `UPLOAD_FOLDER_ID` | optional | A private Drive folder ID. Created automatically on the first upload if blank |
+   | `SPREADSHEET_ID`, `UPLOAD_FOLDER_ID` | auto | Set by `setup`. Don't change them |
+   | `DRIVE_FOLDER_ID` | optional | Use a different Drive folder than the default |
    | `META_ACCESS_TOKEN`, `IG_USER_ID` | for Instagram | See step 2 |
    | `FB_PAGE_ID`, `FB_PAGE_TOKEN` | for Facebook | See step 2 |
    | `GRAPH_VERSION` | optional | Default `v23.0` |
@@ -38,7 +55,7 @@ Allow about 45 minutes. You need a Google account, a Meta Business account (for 
 
 > After you edit Apps Script code, use **Deploy → Manage deployments → Edit → New version**. Otherwise the URL keeps serving the old code.
 
-The sheet gets a **Website** menu: *Refresh website now*, *Publish due social posts now*, *Recalculate campaign metrics*, *Send follow-up digest now*.
+The sheet gets a **Website** menu: *Refresh website now*, *Publish due social posts now*, *Recalculate campaign metrics*, *Send follow-up digest now*, *Save Excel (.xlsx) backup now*.
 
 ### Editing content
 - **SETTINGS**: company info, phone, WhatsApp (digits with country code, e.g. `919876543210`), addresses, maps links, social links, CTA text, default city, service areas (comma-separated; each area gets SEO pages), staff names, hero images, and *Auto Publish*.

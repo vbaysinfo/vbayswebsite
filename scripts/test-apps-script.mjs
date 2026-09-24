@@ -53,17 +53,41 @@ const ss = {
   deleteSheet: (s) => sheets.delete(s.getName()),
   setSpreadsheetTimeZone() {},
   getUrl: () => "https://docs.google.com/spreadsheets/d/test",
+  getId: () => "SHEET1",
 };
+// Mock Drive: folders by ID with subfolders, files and sharing state.
+const folders = new Map();
+const created = { spreadsheets: 0 };
+function makeFolder(id, name) {
+  const f = {
+    id, name, sharing: "inherited", children: [], fileList: [],
+    getId: () => id,
+    getFoldersByName: (n) => iter(f.children.filter((c) => c.name === n)),
+    createFolder: (n) => { const c = makeFolder(`${id}/${n}`, n); f.children.push(c); return c; },
+    getFilesByName: (n) => iter(f.fileList.filter((x) => x.name === n)),
+    getFiles: () => iter(f.fileList),
+    createFile: (blob) => createFile(blob, f),
+    setSharing: (a) => { f.sharing = a; },
+  };
+  folders.set(id, f);
+  return f;
+}
+const iter = (arr) => { let i = 0; return { hasNext: () => i < arr.length, next: () => arr[i++] }; };
+const DRIVE_FOLDER = "1_eMSIYfdKgBis4sOaWs_yKBbAmH0-yRu";
+makeFolder(DRIVE_FOLDER, "Client folder");
 const props = new Map();
 const cache = new Map();
 const mails = [];
 const files = [];
 const fetches = [];
+const triggers = [];
 
 const ctx = {
   console,
   SpreadsheetApp: {
-    getActiveSpreadsheet: () => ss,
+    getActiveSpreadsheet: () => null, // standalone script (script.google.com)
+    create: (name) => { created.spreadsheets++; ss.name = name; return ss; },
+    openById: (id) => { if (id !== "SHEET1") throw new Error("not found"); return ss; },
     getActive: () => ({ toast() {} }),
     flush() {},
     newDataValidation: () => { const b = { requireValueInList: () => b, setAllowInvalid: () => b, build: () => ({}) }; return b; },
@@ -74,11 +98,13 @@ const ctx = {
   ContentService: { MimeType: { JSON: "json" }, createTextOutput: (t) => ({ text: t, setMimeType() { return this; } }) },
   MailApp: { sendEmail: (to, subject, body) => mails.push({ to, subject, body }) },
   DriveApp: {
-    createFolder: () => ({ getId: () => "folder1", createFile }),
-    getFolderById: () => ({ createFile }),
+    Access: { PRIVATE: "PRIVATE" },
+    Permission: { NONE: "NONE" },
+    getFolderById: (id) => { const f = folders.get(id); if (!f) throw new Error("No folder"); return f; },
+    getFileById: (id) => ({ moveTo: (folder) => { ss.parent = folder.getId(); folder.fileList.push({ name: ss.name, getId: () => id }); } }),
   },
-  UrlFetchApp: { fetch: (url, opts) => { fetches.push({ url, opts }); return { getResponseCode: () => 200, getContentText: () => JSON.stringify(mockGraph(url, opts)) }; } },
-  ScriptApp: { getProjectTriggers: () => [], newTrigger: () => { const b = { timeBased: () => b, everyMinutes: () => b, atHour: () => b, everyDays: () => b, inTimezone: () => b, everyHours: () => b, forSpreadsheet: () => b, onEdit: () => b, create: () => b }; return b; } },
+  UrlFetchApp: { fetch: (url, opts) => { fetches.push({ url, opts }); return { getResponseCode: () => 200, getContentText: () => JSON.stringify(mockGraph(url, opts)), getBlob: () => ({ name: "", setName(n) { this.name = n; return this; } }) }; } },
+  ScriptApp: { getOAuthToken: () => "tok", getProjectTriggers: () => [], newTrigger: (fn) => { const b = { timeBased: () => b, everyMinutes: () => b, atHour: () => b, everyDays: () => b, inTimezone: () => b, everyHours: () => b, forSpreadsheet: () => b, onEdit: () => b, onOpen: () => b, create: () => { triggers.push(fn); return b; } }; return b; } },
   Utilities: {
     formatDate: (d, _tz, fmt) => {
       const ist = new Date(d.getTime() + 5.5 * 3600e3);
@@ -92,9 +118,13 @@ const ctx = {
     sleep() {},
   },
 };
-function createFile(blob) {
-  files.push(blob);
-  return { getUrl: () => `https://drive.google.com/file/d/${blob.name}/view`, setDescription() {} };
+function createFile(blob, folder) {
+  const file = { name: blob.name, folder: folder?.name, sharing: "inherited", created: Date.now() + folder.fileList.length,
+    getUrl: () => `https://drive.google.com/file/d/${blob.name}/view`, setDescription() {},
+    setSharing(a) { file.sharing = a; }, getDateCreated: () => file.created, setTrashed() { folder.fileList = folder.fileList.filter((x) => x !== file); } };
+  files.push(file);
+  folder.fileList.push(file);
+  return file;
 }
 function mockGraph(url) {
   if (url.includes("/media_publish")) return { id: "MEDIA1" };
@@ -114,8 +144,20 @@ let passed = 0;
 const test = (name, fn) => { fn(); passed++; console.log("✓", name); };
 
 // ─── Tests ────────────────────────────────────────────────────────────────
-test("setup creates all sheets with headers and seed data", () => {
+test("setup creates the spreadsheet inside the client Drive folder (standalone)", () => {
+  const msg = ctx.setup();
+  assert.equal(created.spreadsheets, 1);
+  assert.equal(ss.parent, DRIVE_FOLDER);
+  assert.equal(props.get("SPREADSHEET_ID"), "SHEET1");
+  const root = folders.get(DRIVE_FOLDER);
+  assert.deepEqual(root.children.map((c) => c.name).sort(), ["Excel Backups", "Lead Uploads (private)"]);
+  assert.ok(root.children.every((c) => c.sharing === "PRIVATE"), "subfolders are private");
+  assert.match(msg, /Spreadsheet: https:/);
   ctx.setup();
+  assert.equal(created.spreadsheets, 1, "re-running setup reuses the same spreadsheet");
+});
+
+test("setup creates all sheets with headers and seed data", () => {
   for (const n of Object.keys(ctx.SCHEMA)) assert.ok(sheets.get(n), `missing ${n}`);
   assert.equal(sheets.get("LEADS").cell(1, 32), "Submission ID");
   assert.ok(props.get("API_SECRET")?.length > 40);
@@ -161,6 +203,8 @@ test("lead creation: ID, uploads to private Drive, attribution, email", () => {
   assert.match(leadId, /^VB\d{6}-0001$/);
   assert.equal(files.length, 1);
   assert.match(files[0].name, /^VB\d{6}-0001-floorPlan\.pdf$/);
+  assert.equal(files[0].folder, "Lead Uploads (private)");
+  assert.equal(files[0].sharing, "PRIVATE");
   const lead = post("admin/leads").data[0];
   assert.equal(lead.status, "New");
   assert.equal(lead.phone, "+919876543210", "phone kept as text");
@@ -241,6 +285,16 @@ test("follow-up digest emails due leads", () => {
   ctx.sendFollowUpDigest();
   assert.equal(mails.length, before + 1);
   assert.match(mails.at(-1).body, new RegExp(leadId));
+});
+
+test("triggers include daily Excel backup; backup keeps latest 14 .xlsx files", () => {
+  ctx.setupTriggers();
+  assert.ok(triggers.includes("exportExcelBackup") && triggers.includes("onOpen") && triggers.includes("processScheduledPosts"));
+  for (let i = 0; i < 16; i++) ctx.exportExcelBackup();
+  const backups = folders.get(DRIVE_FOLDER).children.find((c) => c.name === "Excel Backups").fileList;
+  assert.equal(backups.length, 14);
+  assert.match(backups[0].name, /\.xlsx$/);
+  assert.ok(fetches.some((f) => f.url.includes("/spreadsheets/d/SHEET1/export?format=xlsx")));
 });
 
 console.log(`\n${passed} Apps Script tests passed`);

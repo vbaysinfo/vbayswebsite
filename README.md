@@ -14,7 +14,7 @@ Visitor ─▶ Next.js website ─▶ /api/* (server) ─▶ Google Apps Script 
 
 - **Website** — Next.js 16 (App Router, Cache Components, Turbopack), React 19, Tailwind CSS v4.
 - **API layer** — Google Apps Script web app (`apps-script/`). The URL and secret live **only** in server env vars; browsers never talk to Apps Script or see any credential.
-- **Database / CMS** — one Google Sheet with 12 tabs (settings, services, projects, gallery, before/after, testimonials, factory, leads, events, social posts, content calendar, campaigns).
+- **Database / CMS** — one Google Sheet, created automatically by `setup()` in the Drive folder [`1_eMSIYfdKgBis4sOaWs_yKBbAmH0-yRu`](https://drive.google.com/drive/folders/1_eMSIYfdKgBis4sOaWs_yKBbAmH0-yRu) together with a private uploads folder and daily Excel (.xlsx) backups. It has 12 tabs (settings, services, projects, gallery, before/after, testimonials, factory, leads, events, social posts, content calendar, campaigns).
 
 ## Features
 
@@ -53,7 +53,7 @@ Follow **[docs/SETUP.md](docs/SETUP.md)**: create the Sheet, install the Apps Sc
 |---|---|
 | `npm run dev` / `build` / `start` | Next.js |
 | `npm run lint` · `npm run typecheck` | ESLint · TypeScript |
-| `npm run test:apps-script` | Runs the Apps Script backend against an in-memory Sheets/Drive mock (13 end-to-end tests) |
+| `npm run test:apps-script` | Runs the Apps Script backend against an in-memory Sheets/Drive mock (15 end-to-end tests) |
 | `npm run gen:apps-script` | Regenerates `apps-script/Schema.gs` (sheet headers + seed rows) from `src/lib/sheet-schema.ts` and `src/data/seed.ts` |
 
 ## Project structure
