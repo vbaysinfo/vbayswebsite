@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Jost } from "next/font/google";
+import { Bodoni_Moda, Outfit } from "next/font/google";
 import { getSettings } from "@/lib/server/content";
 import { SITE_URL } from "@/lib/seo";
 import { BRAND } from "@/data/site";
 import "./globals.css";
 
-const display = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500", "600"], style: ["normal", "italic"], variable: "--font-display-face", display: "swap" });
-const sans = Jost({ subsets: ["latin"], variable: "--font-sans-face", display: "swap" });
+// Modern luxury pairing: Outfit (clean geometric sans) + Bodoni Moda Italic accents.
+const sans = Outfit({ subsets: ["latin"], variable: "--font-sans-face", display: "swap" });
+const accent = Bodoni_Moda({ subsets: ["latin"], style: ["italic"], weight: ["400", "500"], variable: "--font-accent-face", display: "swap" });
 
 export async function generateMetadata(): Promise<Metadata> {
   const s = await getSettings();
@@ -24,14 +25,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#14110f",
+  themeColor: "#2d3033",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" className={`${display.variable} ${sans.variable}`}>
+    <html lang="en-IN" className={`${sans.variable} ${accent.variable}`}>
       <body>{children}</body>
     </html>
   );

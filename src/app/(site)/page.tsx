@@ -41,7 +41,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero: editorial split with arched image ─────────────── */}
-      <section className="grain relative overflow-hidden bg-espresso text-white">
+      <section className="grain panels relative overflow-hidden bg-espresso text-white">
         <div aria-hidden className="pointer-events-none absolute -left-40 top-1/3 h-[36rem] w-[36rem] rounded-full bg-brass/10 blur-3xl" />
         <div className="container-x grid min-h-[100svh] items-center gap-14 pb-20 pt-32 lg:grid-cols-[1.08fr_0.92fr] lg:gap-10 lg:pt-36">
           <div className="animate-fade-up">
@@ -65,6 +65,7 @@ export default async function HomePage() {
 
           <div className="relative mx-auto w-full max-w-[30rem] lg:ml-auto lg:mr-0">
             <div aria-hidden className="absolute -right-4 -top-4 bottom-6 left-6 rounded-[999px_999px_1.5rem_1.5rem] border border-brass/50" />
+            <div aria-hidden className="walnut-grain absolute -right-10 bottom-0 top-24 hidden w-3 rounded-full shadow-lift sm:block" />
             <div className="arch relative aspect-[4/5] bg-sand shadow-lift">
               <SmartImage src={settings.heroImage} alt="Luxury modular interior designed and manufactured by our studio" fill priority sizes="(min-width:1024px) 40vw, 90vw" className="object-cover" />
             </div>
@@ -142,7 +143,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Factory triptych ────────────────────────────────────── */}
-      <section className="grain section bg-espresso text-white">
+      <section className="grain panels section bg-espresso text-white">
         <div className="container-x">
           <div className="grid items-end gap-12 lg:grid-cols-[1fr_0.8fr]">
             <SectionHeading light eyebrow="Our factory" title={<>Designed by Experts. <em>Manufactured</em> in Our Factory.</>} text="Our in-house manufacturing facility allows us to coordinate design, production, quality and delivery through one system." />

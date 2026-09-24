@@ -11,7 +11,8 @@ export async function Footer() {
   const { settings, services } = await getContent();
   const year = await getCurrentYear();
   return (
-    <footer className="grain relative overflow-hidden bg-espresso pb-28 text-white/70 md:pb-0">
+    <footer className="grain panels relative overflow-hidden bg-espresso pb-28 text-white/70 md:pb-0">
+      <div aria-hidden className="walnut-grain h-2 w-full" />
       <div className="container-x border-b border-white/10 py-16 md:py-20">
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
           <p className="max-w-2xl font-display text-4xl leading-tight text-white md:text-6xl">

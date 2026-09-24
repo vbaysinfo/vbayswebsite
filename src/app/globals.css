@@ -1,25 +1,29 @@
 @import "tailwindcss";
 
 /* ─── Luxury interior design system ───────────────────────────────────────
-   Espresso ink, warm ivory, champagne gold. Cormorant Garamond display,
-   Jost body. Arches, hairlines and generous whitespace. */
+   Palette taken from a graphite-and-walnut wardrobe: graphite matte panels,
+   walnut wood, warm LED glow, light grey wall. Outfit (modern geometric sans)
+   with Bodoni Moda Italic accents. Arches, hairlines, shutter-panel joints. */
 @theme {
-  --color-ink: #14110f;
-  --color-ink-soft: #3a332d;
-  --color-muted: #6f665c;
-  --color-paper: #f7f3ec;
-  --color-stone: #efe8dd;
-  --color-sand: #e2d7c6;
-  --color-line: #ddd2c1;
-  --color-brass: #b08d57;
-  --color-brass-dark: #86683a;
-  --color-brass-soft: #f1e6d3;
-  --color-espresso: #1d1814;
+  --color-ink: #1d1f21;          /* black handles */
+  --color-ink-soft: #3b3f43;
+  --color-muted: #6b6e70;
+  --color-paper: #f4f2ef;        /* light grey wall */
+  --color-stone: #e9e6e1;        /* ivory rug */
+  --color-sand: #d6d1c9;
+  --color-line: #d9d5ce;
+  --color-brass: #b8864f;        /* warm LED glow on oak */
+  --color-brass-dark: #7a4b2a;   /* walnut */
+  --color-brass-soft: #efe4d6;
+  --color-espresso: #2d3033;     /* graphite matte shutters */
+  --color-graphite: #4b5054;
+  --color-walnut: #6e4527;
   --color-wa: #178a43;
   --color-wa-dark: #11703a;
 
   --font-sans: var(--font-sans-face), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display-face), ui-serif, Georgia, serif;
+  --font-display: var(--font-sans-face), ui-sans-serif, system-ui, sans-serif;
+  --font-accent: var(--font-accent-face), ui-serif, Georgia, serif;
 
   --radius-card: 1.25rem;
   --radius-arch: 999px 999px 1.25rem 1.25rem;
@@ -41,8 +45,10 @@
 
 /* Italic gold accent word inside serif headings: <em> in SectionHeading, or class="gold-italic" */
 @utility gold-italic {
+  font-family: var(--font-accent);
   font-style: italic;
   font-weight: 400;
+  letter-spacing: -0.01em;
   color: var(--color-brass);
 }
 
@@ -57,7 +63,7 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  h1, h2, h3, .font-display { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.01em; }
+  h1, h2, h3, .font-display { font-family: var(--font-display); font-weight: 300; letter-spacing: -0.025em; }
   ::selection { background: var(--color-brass); color: #fff; }
   :focus-visible { outline: 2px solid var(--color-brass); outline-offset: 3px; border-radius: 4px; }
   @media (prefers-reduced-motion: reduce) {
@@ -132,8 +138,23 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
+  /* Vertical shutter joints, like wardrobe panels, for dark sections */
+  .panels { position: relative; isolation: isolate; }
+  .panels::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background-image: repeating-linear-gradient(90deg, transparent 0 calc(10rem - 1px), rgb(255 255 255 / .045) calc(10rem - 1px) 10rem);
+    mask-image: linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+  }
+
+  /* Walnut veneer strip */
+  .walnut-grain {
+    background:
+      repeating-linear-gradient(90deg, rgb(0 0 0 / .08) 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(92deg, #6e4527 0 5px, #7d5030 5px 11px, #5f3b21 11px 14px, #875a37 14px 22px);
+  }
+
   /* Outlined display numerals */
-  .numeral { font-family: var(--font-display); color: transparent; -webkit-text-stroke: 1px var(--color-brass); line-height: 1; }
+  .numeral { font-family: var(--font-accent); font-style: italic; color: transparent; -webkit-text-stroke: 1px var(--color-brass); line-height: 1; }
 
   /* Scroll reveal (see <Reveal>) */
   [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); }

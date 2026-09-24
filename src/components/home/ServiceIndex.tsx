@@ -24,7 +24,7 @@ export function ServiceIndex({ services }: { services: Service[] }) {
             >
               <span className={`font-display text-lg transition-colors md:text-xl ${active === i ? "text-brass" : "text-muted"}`}>{String(i + 1).padStart(2, "0")}</span>
               <span>
-                <span className={`block font-display text-[1.7rem] leading-tight transition-all duration-500 md:text-[2.4rem] ${active === i ? "translate-x-2 italic text-brass-dark" : "text-ink"}`}>
+                <span className={`block font-display text-[1.7rem] leading-tight transition-all duration-500 md:text-[2.4rem] ${active === i ? "translate-x-2 font-accent italic text-brass-dark" : "text-ink"}`}>
                   {s.serviceName}
                 </span>
                 <span className="mt-1 block max-w-md text-sm text-muted">{s.shortDescription}</span>

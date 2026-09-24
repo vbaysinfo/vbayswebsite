@@ -39,7 +39,7 @@ export function SmartImage({ src, alt, label, className, fill, ...rest }: Props)
         role="img"
         aria-label={alt}
         className={cn(
-          "flex items-center justify-center overflow-hidden bg-[radial-gradient(120%_90%_at_30%_20%,#f4ece0_0%,#e6d9c6_45%,#cdb99c_100%)] text-brass-dark",
+          "flex items-center justify-center overflow-hidden bg-[radial-gradient(120%_90%_at_30%_15%,#f1eee9_0%,#d9d4cc_50%,#b8ada0_100%)] text-brass-dark",
           fill ? "absolute inset-0" : "",
           className,
         )}

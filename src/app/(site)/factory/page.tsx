@@ -54,7 +54,7 @@ export default async function FactoryPage() {
         </div>
       </section>
 
-      <section className="grain section bg-espresso text-white">
+      <section className="grain panels section bg-espresso text-white">
         <div className="container-x">
           <SectionHeading light eyebrow="Factory process" title="15 steps from your requirement to installation" />
           <ol className="mt-14 grid gap-px overflow-hidden rounded-[var(--radius-card)] bg-white/10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">

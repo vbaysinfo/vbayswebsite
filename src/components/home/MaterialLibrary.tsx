@@ -5,14 +5,14 @@ import { Reveal } from "@/components/ui/Reveal";
 // Finish swatches rendered in pure CSS — a tactile, "material board" moment
 // that looks refined even before real photography is added.
 const MATERIALS = [
-  { name: "American Walnut", note: "Veneer", bg: "repeating-linear-gradient(92deg,#5b3a24 0 3px,#6a4429 3px 9px,#50331f 9px 12px,#734b2e 12px 20px)" },
-  { name: "Natural Oak", note: "Laminate", bg: "repeating-linear-gradient(88deg,#c9a57a 0 4px,#d4b389 4px 11px,#bf9b70 11px 14px,#d9ba92 14px 24px)" },
+  { name: "American Walnut", note: "Veneer", bg: "repeating-linear-gradient(92deg,#5f3b21 0 3px,#6e4527 3px 9px,#553420 9px 12px,#7d5030 12px 20px)" },
+  { name: "Graphite Matte", note: "PU shutter", bg: "linear-gradient(160deg,#565b60 0%,#4b5054 50%,#43474b 100%)" },
+  { name: "Smoked Bronze", note: "Glass shutter", bg: "linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,transparent 1px),linear-gradient(170deg,rgba(210,170,110,.55) 0%,rgba(80,62,45,.85) 60%,rgba(45,38,32,.95) 100%)" },
+  { name: "Warm Oak", note: "Laminate", bg: "repeating-linear-gradient(88deg,#c49a6a 0 4px,#cfa877 4px 11px,#b98f60 11px 14px,#d4b083 14px 24px)" },
   { name: "Statuario", note: "Quartz top", bg: "linear-gradient(125deg,transparent 40%,rgba(120,120,120,.35) 41%,transparent 43%),linear-gradient(35deg,transparent 60%,rgba(150,150,150,.3) 61%,transparent 62.5%),#f2f0ec" },
-  { name: "Champagne", note: "Brushed metal", bg: "repeating-linear-gradient(90deg,#c8a86e 0 1px,#d8bc86 1px 3px,#b8965c 3px 4px),linear-gradient(135deg,#e2c995,#a88348)" },
-  { name: "Sage Matte", note: "PU finish", bg: "radial-gradient(circle at 30% 30%,#a3ad96,#7f8a72)" },
-  { name: "Ivory Linen", note: "Fabric panel", bg: "repeating-linear-gradient(0deg,rgba(0,0,0,.035) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.035) 0 1px,transparent 1px 3px),#ede4d4" },
-  { name: "Graphite", note: "Acrylic gloss", bg: "linear-gradient(160deg,#4a4845 0%,#2b2a28 55%,#3d3b38 100%)" },
-  { name: "Terrazzo", note: "Accent", bg: "radial-gradient(circle at 20% 30%,#c47f5b 0 3px,transparent 3.5px) 0 0/46px 46px,radial-gradient(circle at 70% 65%,#6d7f73 0 4px,transparent 4.5px) 0 0/58px 58px,radial-gradient(circle at 45% 80%,#d8b27a 0 2.5px,transparent 3px) 0 0/38px 38px,radial-gradient(circle at 85% 20%,#9a9a94 0 2px,transparent 2.5px) 0 0/30px 30px,#ece6dc" },
+  { name: "Black Profile", note: "Handle & trim", bg: "repeating-linear-gradient(0deg,#1d1f21 0 18px,#2a2c2f 18px 20px)" },
+  { name: "Ivory Linen", note: "Fabric panel", bg: "repeating-linear-gradient(0deg,rgba(0,0,0,.035) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.035) 0 1px,transparent 1px 3px),#ede8df" },
+  { name: "Warm LED Glow", note: "Profile lighting", bg: "radial-gradient(120% 70% at 50% 0%,#ffe2b0 0%,#d9a867 35%,#6e4527 80%,#3a2a1d 100%)" },
 ];
 
 export function MaterialLibrary() {

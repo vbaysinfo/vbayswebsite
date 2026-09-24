@@ -5,7 +5,7 @@ export function PageHero({ eyebrow, title, text, image, alt, children }: {
   eyebrow?: string; title: React.ReactNode; text?: React.ReactNode; image?: string; alt?: string; children?: React.ReactNode;
 }) {
   return (
-    <section className="grain relative isolate overflow-hidden bg-espresso pt-[4.75rem] text-white md:pt-[5.5rem]">
+    <section className="grain panels relative isolate overflow-hidden bg-espresso pt-[4.75rem] text-white md:pt-[5.5rem]">
       <div aria-hidden className="pointer-events-none absolute -right-32 -top-32 h-[30rem] w-[30rem] rounded-full bg-brass/10 blur-3xl" />
       <div className="container-x grid items-center gap-12 py-14 md:py-20 lg:grid-cols-[1.25fr_0.75fr]">
         <div className="animate-fade-up">
