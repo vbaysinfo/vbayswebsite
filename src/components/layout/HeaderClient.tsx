@@ -29,7 +29,7 @@ function Logo({ settings, light }: { settings: Settings; light: boolean }) {
           {first}
           <span className="gold-italic"> {rest.join(" ")}</span>
         </span>
-        <span className={cn("mt-0.5 hidden text-[0.52rem] font-medium tracking-[0.3em] uppercase sm:block", light ? "text-white/55" : "text-muted")}>
+        <span className={cn("mt-0.5 hidden text-[0.52rem] font-medium tracking-[0.3em] uppercase sm:block lg:hidden xl:block", light ? "text-white/55" : "text-muted")}>
           Design · Manufacture · Install
         </span>
       </span>
@@ -75,7 +75,7 @@ export function HeaderClient({ settings }: { settings: Settings }) {
 
   const linkCls = (href: string) =>
     cn(
-      "relative px-3.5 py-2 text-[0.8rem] font-medium tracking-[0.06em] transition-colors",
+      "relative whitespace-nowrap px-2.5 py-2 text-base font-normal transition-colors xl:px-4",
       light ? "text-white/80 hover:text-white" : "text-ink-soft hover:text-ink",
       isActive(href) && (light ? "text-white" : "text-ink"),
     );
@@ -103,7 +103,7 @@ export function HeaderClient({ settings }: { settings: Settings }) {
               <div key={item.href} className="group relative">
                 <Link href={item.href} className={cn(linkCls(item.href), "flex items-center gap-1")}>
                   {item.label}
-                  <ChevronDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" aria-hidden />
+                  <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" aria-hidden />
                   {activeDot(item.href)}
                 </Link>
                 {/* Mega menu */}
@@ -111,7 +111,7 @@ export function HeaderClient({ settings }: { settings: Settings }) {
                   <div className="grid grid-cols-[1.5fr_1fr] overflow-hidden rounded-3xl border border-line bg-paper shadow-lift">
                     <div className="grid grid-cols-2 gap-1 p-4">
                       {item.children.map((c) => (
-                        <Link key={c.href} href={c.href} className="group/item flex items-center justify-between rounded-2xl px-4 py-3 text-[0.92rem] text-ink-soft transition-colors hover:bg-white hover:text-ink">
+                        <Link key={c.href} href={c.href} className="group/item flex items-center justify-between rounded-2xl px-4 py-3 text-base text-ink-soft transition-colors hover:bg-white hover:text-ink">
                           {c.label}
                           <ArrowUpRight className="h-3.5 w-3.5 text-brass opacity-0 transition-opacity group-hover/item:opacity-100" aria-hidden />
                         </Link>
@@ -142,7 +142,7 @@ export function HeaderClient({ settings }: { settings: Settings }) {
             href={telUrl(settings.phone)}
             onClick={() => track("call_click", { label: "header" })}
             className={cn(
-              "hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-colors xl:flex",
+              "hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 text-base font-medium transition-colors min-[1360px]:flex",
               light ? "text-white hover:bg-white/10" : "text-ink hover:bg-white",
             )}
           >
@@ -157,18 +157,19 @@ export function HeaderClient({ settings }: { settings: Settings }) {
             rel="noopener noreferrer"
             onClick={() => track("whatsapp_click", { label: "header" })}
             aria-label="Chat on WhatsApp"
-            className="grid h-11 w-11 place-items-center rounded-full bg-wa text-white transition-transform hover:scale-105"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-wa text-white transition-transform hover:scale-105"
           >
             <WhatsAppIcon className="h-5 w-5" />
           </a>
           <Link
             href="/get-quote"
             className={cn(
-              "hidden h-11 items-center gap-2 rounded-full pl-5 pr-2 text-[0.8rem] font-medium tracking-[0.06em] transition-colors md:flex",
+              "hidden h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full pl-5 pr-2 text-base font-medium transition-colors md:flex",
               light ? "bg-white text-ink hover:bg-brass hover:text-white" : "bg-ink text-white hover:bg-brass-dark",
             )}
           >
-            Get Free Quote
+            <span className="xl:hidden">Free Quote</span>
+            <span className="hidden xl:inline">Get Free Quote</span>
             <span className={cn("grid h-7 w-7 place-items-center rounded-full", light ? "bg-ink text-white" : "bg-brass text-white")}>
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
             </span>
